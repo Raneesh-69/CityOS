@@ -2,7 +2,6 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import express from "express";
-import cors from "cors";
 import mongoose from "mongoose";
 
 import authRoutes from "./routes/authRoutes.js";
@@ -12,8 +11,6 @@ import adminRoutes from "./routes/adminRoutes.js";
 const app = express();
 
 // ===============================
-// CORS Configuration
-// ===============================// ===============================
 // CORS Configuration
 // ===============================
 
@@ -27,14 +24,17 @@ app.use((req, res, next) => {
   const origin = req.headers.origin;
 
   if (allowedOrigins.includes(origin)) {
-    res.header("Access-Control-Allow-Origin", origin);
-    res.header("Vary", "Origin");
-    res.header("Access-Control-Allow-Credentials", "true");
-    res.header(
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Vary", "Origin");
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader(
       "Access-Control-Allow-Methods",
-      "GET,POST,PUT,PATCH,DELETE,OPTIONS",
+      "GET, POST, PUT, PATCH, DELETE, OPTIONS",
     );
-    res.header("Access-Control-Allow-Headers", "Content-Type,Authorization");
+    res.setHeader(
+      "Access-Control-Allow-Headers",
+      "Content-Type, Authorization",
+    );
   }
 
   // Handle browser preflight requests
@@ -46,9 +46,11 @@ app.use((req, res, next) => {
 });
 
 app.use(express.json());
+
 // ===============================
 // Routes
 // ===============================
+
 app.use("/api/auth", authRoutes);
 app.use("/api/complaints", complaintRoutes);
 app.use("/api/admin", adminRoutes);
@@ -56,6 +58,7 @@ app.use("/api/admin", adminRoutes);
 // ===============================
 // Test Route
 // ===============================
+
 app.get("/", (req, res) => {
   res.send("🚀 CityOS AI Backend Running...");
 });
@@ -63,6 +66,7 @@ app.get("/", (req, res) => {
 // ===============================
 // MongoDB Connection
 // ===============================
+
 const startServer = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI);
