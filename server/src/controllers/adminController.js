@@ -347,3 +347,219 @@ export const reassignComplaint = async (req, res) => {
     });
   }
 };
+// =====================================
+// CITIZEN MANAGEMENT
+// =====================================
+
+// Get All Citizens
+export const getAllCitizens = async (req, res) => {
+  try {
+    const citizens = await User.find({
+      role: "citizen",
+    })
+      .select("-password")
+      .sort({ createdAt: -1 });
+
+    const citizensWithComplaintCount = await Promise.all(
+      citizens.map(async (citizen) => {
+        const complaintCount = await Complaint.countDocuments({
+          user: citizen._id,
+        });
+
+        return {
+          ...citizen.toObject(),
+          complaintCount,
+        };
+      }),
+    );
+
+    res.status(200).json(citizensWithComplaintCount);
+  } catch (error) {
+    console.error("Failed to get citizens:", error);
+
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+// =====================================
+// Create Citizen
+// =====================================
+
+export const createCitizen = async (req, res) => {
+  try {
+    const { name, email, password, phone } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({
+        message: "Name, email and password are required.",
+      });
+    }
+
+    const citizenExists = await User.findOne({ email });
+
+    if (citizenExists) {
+      return res.status(400).json({
+        message: "An account with this email already exists.",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const citizen = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+      phone,
+      role: "citizen",
+      department: "",
+    });
+
+    const citizenResponse = citizen.toObject();
+
+    delete citizenResponse.password;
+
+    res.status(201).json({
+      message: "Citizen created successfully.",
+      citizen: citizenResponse,
+    });
+  } catch (error) {
+    console.error("Failed to create citizen:", error);
+
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+// =====================================
+// Update Citizen
+// =====================================
+
+export const updateCitizen = async (req, res) => {
+  try {
+    const { citizenId } = req.params;
+    const { name, email, phone } = req.body;
+
+    const citizen = await User.findById(citizenId);
+
+    if (!citizen || citizen.role !== "citizen") {
+      return res.status(404).json({
+        message: "Citizen not found.",
+      });
+    }
+
+    // Prevent duplicate email
+    if (email && email !== citizen.email) {
+      const emailExists = await User.findOne({
+        email,
+        _id: { $ne: citizenId },
+      });
+
+      if (emailExists) {
+        return res.status(400).json({
+          message: "Another account already uses this email.",
+        });
+      }
+    }
+
+    citizen.name = name;
+    citizen.email = email;
+    citizen.phone = phone;
+
+    await citizen.save();
+
+    const citizenResponse = citizen.toObject();
+
+    delete citizenResponse.password;
+
+    res.status(200).json({
+      message: "Citizen updated successfully.",
+      citizen: citizenResponse,
+    });
+  } catch (error) {
+    console.error("Failed to update citizen:", error);
+
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+// =====================================
+// Delete Citizen
+// =====================================
+
+export const deleteCitizen = async (req, res) => {
+  try {
+    const { citizenId } = req.params;
+
+    const citizen = await User.findById(citizenId);
+
+    if (!citizen || citizen.role !== "citizen") {
+      return res.status(404).json({
+        message: "Citizen not found.",
+      });
+    }
+
+    await User.findByIdAndDelete(citizenId);
+
+    res.status(200).json({
+      message: "Citizen deleted successfully.",
+    });
+  } catch (error) {
+    console.error("Failed to delete citizen:", error);
+
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+// =====================================
+// Update Citizen Status
+// =====================================
+
+export const updateCitizenStatus = async (req, res) => {
+  try {
+    const { citizenId } = req.params;
+    const { status } = req.body;
+
+    if (!["active", "inactive"].includes(status)) {
+      return res.status(400).json({
+        message: "Invalid citizen status.",
+      });
+    }
+
+    const citizen = await User.findById(citizenId);
+
+    if (!citizen || citizen.role !== "citizen") {
+      return res.status(404).json({
+        message: "Citizen not found.",
+      });
+    }
+
+    citizen.accountStatus = status;
+
+    await citizen.save();
+
+    res.status(200).json({
+      message: `Citizen account ${status}.`,
+      citizen: {
+        _id: citizen._id,
+        name: citizen.name,
+        email: citizen.email,
+        phone: citizen.phone,
+        role: citizen.role,
+        accountStatus: citizen.accountStatus,
+      },
+    });
+  } catch (error) {
+    console.error("Failed to update citizen status:", error);
+
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};

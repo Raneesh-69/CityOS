@@ -11,6 +11,13 @@ import {
   reassignComplaint,
   updateOfficer,
   deleteOfficer,
+
+  // Citizen Management
+  getAllCitizens,
+  createCitizen,
+  updateCitizen,
+  deleteCitizen,
+  updateCitizenStatus,
 } from "../controllers/adminController.js";
 import { protect, adminOnly } from "../middleware/authMiddleware.js";
 
@@ -61,4 +68,27 @@ router.get(
 router.put("/officers/:officerId", updateOfficer);
 
 router.delete("/officers/:officerId", deleteOfficer);
+// ======================================
+// Citizens
+// ======================================
+
+// Create Citizen
+router.post("/create-citizen", protect, adminOnly, createCitizen);
+
+// All Citizens
+router.get("/citizens", protect, adminOnly, getAllCitizens);
+
+// Update Citizen
+router.put("/citizens/:citizenId", protect, adminOnly, updateCitizen);
+
+// Delete Citizen
+router.delete("/citizens/:citizenId", protect, adminOnly, deleteCitizen);
+
+// Activate / Deactivate Citizen
+router.patch(
+  "/citizens/:citizenId/status",
+  protect,
+  adminOnly,
+  updateCitizenStatus,
+);
 export default router;

@@ -22,7 +22,7 @@ import ManageComplaints from "./pages/Admin/ManageComplaints";
 import AdminComplaintDetails from "./pages/Admin/ComplaintDetails";
 import OfficerComplaintDetails from "./pages/OfficerComplaintDetails";
 import AdminAnalytics from "./pages/Admin/AdminAnalytics";
-
+import ManageCitizens from "./pages/Admin/ManageCitizens";
 function App() {
   return (
     <Routes>
@@ -140,6 +140,7 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route path="/admin/citizens" element={<ManageCitizens />} />
       <Route
         path="/admin/officers"
         element={
