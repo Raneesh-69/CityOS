@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://cityos-8flx.onrender.com/api",
+  baseURL: "https://cityos-8f1x.onrender.com/api",
 });
 
 api.interceptors.request.use((config) => {
