@@ -8,6 +8,4 @@ cloudinary.config({
   secure: true,
 });
 
-console.log("Cloudinary Config:", cloudinary.config());
-
 export default cloudinary;
