@@ -15,22 +15,33 @@ const app = express();
 // CORS Configuration
 // ===============================
 
-const allowedOrigins = [
+const defaultAllowed = [
   "http://localhost:5173",
   "http://localhost:5174",
   "http://localhost:3000",
 ];
 
+// Build allowed origins from defaults + env vars
+let allowedOrigins = [...defaultAllowed];
+
 if (process.env.DEPLOYED_ORIGIN) {
   allowedOrigins.push(process.env.DEPLOYED_ORIGIN);
 }
 
+if (process.env.ALLOWED_ORIGINS) {
+  const envOrigins = process.env.ALLOWED_ORIGINS.split(",").map((s) => s.trim()).filter(Boolean);
+  allowedOrigins = Array.from(new Set([...allowedOrigins, ...envOrigins]));
+}
+
+console.log("CORS allowed origins:", allowedOrigins);
+
 app.use(
   cors({
     origin: (origin, callback) => {
+      // Allow non-browser requests like curl or server-to-server (no origin)
       if (!origin) return callback(null, true);
       if (allowedOrigins.includes(origin)) return callback(null, true);
-      return callback(new Error("Not allowed by CORS"));
+      return callback(new Error(`Origin ${origin} not allowed by CORS`));
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
