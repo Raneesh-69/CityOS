@@ -143,6 +143,6 @@ I’m always open to collaborations, internships, hackathons, and project opport
 
 ## Author
 
-**Shaik Akmal**
+**Raneesh Joga**
 
 Built as an AI-powered civic management platform to improve communication between citizens and government departments and make urban problem resolution more efficient.
