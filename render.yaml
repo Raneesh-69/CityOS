@@ -1,0 +1,19 @@
+# Render manifest to deploy server (web service) and client (static site)
+# Push this file and create a new Web Service in Render from this repo.
+
+services:
+  - type: web
+    name: cityos-server
+    env: node
+    plan: free
+    # Path within the repo where the server code resides
+    path: server
+    buildCommand: npm install
+    startCommand: npm start
+
+  - type: static-site
+    name: cityos-client
+    path: client
+    plan: free
+    buildCommand: npm install && npm run build
+    publishCommand: cp -r dist public || true
