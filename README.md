@@ -137,7 +137,7 @@ I’m always open to collaborations, internships, hackathons, and project opport
 
 📌 **GitHub:** https://github.com/Raneesh-69
 
-📌 **LinkedIn:** https://www.linkedin.com/in/pitamber-joga-79656a351
+📌 **LinkedIn:** https://www.linkedin.com/in/pitamber-raneesh-joga-79656a351
 
 📌 **Email:** prjoga9@gmail.com
 
