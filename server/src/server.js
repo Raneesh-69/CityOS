@@ -29,7 +29,9 @@ if (process.env.DEPLOYED_ORIGIN) {
 }
 
 if (process.env.ALLOWED_ORIGINS) {
-  const envOrigins = process.env.ALLOWED_ORIGINS.split(",").map((s) => s.trim()).filter(Boolean);
+  const envOrigins = process.env.ALLOWED_ORIGINS.split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
   allowedOrigins = Array.from(new Set([...allowedOrigins, ...envOrigins]));
 }
 

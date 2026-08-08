@@ -25,7 +25,6 @@ function AdminDashboard() {
 
   const [recentComplaints, setRecentComplaints] = useState([]);
   const [loading, setLoading] = useState(true);
-
   const adminLinks = [
     {
       label: "Dashboard",
@@ -43,6 +42,11 @@ function AdminDashboard() {
       icon: "🧑‍💼",
     },
     {
+      label: "Manage Citizens",
+      path: "/admin/citizens",
+      icon: "👥",
+    },
+    {
       label: "Complaints",
       path: "/admin/complaints",
       icon: "📋",
@@ -53,7 +57,6 @@ function AdminDashboard() {
       icon: "📊",
     },
   ];
-
   useEffect(() => {
     loadDashboard();
   }, []);
